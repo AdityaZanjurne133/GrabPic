@@ -25,54 +25,59 @@ detector = cv2.FaceDetectorYN.create(
     top_k=5000
 )
 
-images = os.listdir(images_path)
-skipped = []
-errors = []
+def extract_faces():
 
-if os.path.exists(face_save_path):
-    empty_dir(face_save_path)
+    images = os.listdir(images_path)
+    skipped = []
+    errors = []
 
-for img in images:
-    try:
-        image_path = os.path.join(images_path, img)
-        img_faces_folder = img.split(".")[0]
-        
-        image = cv2.imread(image_path)
-        h_img, w_img = image.shape[:2]
-        
-        # IMPORTANT: set input size dynamically
-        detector.setInputSize((w_img, h_img))
-        
-        # Detect
-        _, faces = detector.detect(image)
+    if os.path.exists(face_save_path):
+        empty_dir(face_save_path)
 
-        if faces is None or len(faces) == 0:
-            print(f"No faces found in {img}. Applying CLAHE...")
-            image = image_clahe(image)
+    for img in images:
+        try:
+            image_path = os.path.join(images_path, img)
+            img_faces_folder = img.split(".")[0]
+            
+            image = cv2.imread(image_path)
+            h_img, w_img = image.shape[:2]
+            
+            # IMPORTANT: set input size dynamically
+            detector.setInputSize((w_img, h_img))
             
             # Detect
             _, faces = detector.detect(image)
-        
-        if faces is None or len(faces) == 0:
-            print(f"No faces found in {img}. Skipping...")
-            skipped.append(img)
-            continue
 
-        os.makedirs(os.path.join(face_save_path, img_faces_folder), exist_ok=True)
+            if faces is None or len(faces) == 0:
+                print(f"No faces found in {img}. Applying CLAHE...")
+                image = image_clahe(image)
+                
+                # Detect
+                _, faces = detector.detect(image)
+            
+            if faces is None or len(faces) == 0:
+                print(f"No faces found in {img}. Skipping...")
+                skipped.append(img)
+                continue
 
-        for face in tqdm(faces, desc=f"Detecting faces in: {img}"):
-            x, y, w, h = face[:4].astype(int)
+            os.makedirs(os.path.join(face_save_path, img_faces_folder), exist_ok=True)
 
-            # Clip to image boundaries
-            x = max(0, x)
-            y = max(0, y)
-            x2 = min(w_img, x + w)
-            y2 = min(h_img, y + h)
+            for face in tqdm(faces, desc=f"Detecting faces in: {img}"):
+                x, y, w, h = face[:4].astype(int)
 
-            face = image[y:y+h, x:x+w]
+                # Clip to image boundaries
+                x = max(0, x)
+                y = max(0, y)
+                x2 = min(w_img, x + w)
+                y2 = min(h_img, y + h)
 
-            cv2.imwrite(os.path.join(face_save_path, img_faces_folder, f"face_{x}_{y}_{w}_{h}.jpg"), face)
-    except Exception as e:
-        print(f"Error occured while detecting faces in {img}: {e}")
-        empty_dir(os.path.join(face_save_path, img_faces_folder))
-        errors.append(img)
+                face = image[y:y+h, x:x+w]
+
+                cv2.imwrite(os.path.join(face_save_path, img_faces_folder, f"face_{x}_{y}_{w}_{h}.jpg"), face)
+        except Exception as e:
+            print(f"Error occured while detecting faces in {img}: {e}")
+            empty_dir(os.path.join(face_save_path, img_faces_folder))
+            errors.append(img)
+ 
+if __name__ == "__main__":
+    extract_faces()
