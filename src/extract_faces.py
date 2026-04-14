@@ -78,6 +78,18 @@ def extract_faces():
             print(f"Error occured while detecting faces in {img}: {e}")
             empty_dir(os.path.join(face_save_path, img_faces_folder))
             errors.append(img)
- 
+    
+    print(f"\nSuccessfully extracted faces in {len(os.listdir(face_save_path))} images!")
+
+    print(f"\nCouldn't find faces in {len(skipped)} images.")
+    if len(skipped) > 0:
+        for file in skipped:
+            print(file)
+    
+    print(f"\nError occured while extracting faces in {len(errors)} images!")
+    if len(errors) > 0:
+        for file in errors:
+            print(file)
+
 if __name__ == "__main__":
     extract_faces()

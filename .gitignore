@@ -13,8 +13,7 @@ wheels/
 .env
 
 # data
-data/all_photos/*
-data/extracted_faces/*
+data/*
 
 # models
 models/*
