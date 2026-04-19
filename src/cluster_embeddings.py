@@ -23,7 +23,7 @@ def get_face_embedding_and_metadata(embedding_data_file_path):
 
     return face_emb_data
 
-def cluster_embeddings(embedding_data_file_path):
+def cluster_embeddings(embedding_data_file_path, embedding_and_labels_data_file_path):
     face_emb_data = get_face_embedding_and_metadata(embedding_data_file_path)
 
     # Get all the face embeddings as a list
@@ -43,15 +43,19 @@ def cluster_embeddings(embedding_data_file_path):
 
     labels = clustering.labels_
 
+    with open(embedding_and_labels_data_file_path, "wb") as f:
+        pickle.dump(face_emb_data, f)
+
     return labels
 
 if __name__ == "__main__":
     embedding_data_file_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/extracted_emb_data.pkl")
+    embedding_and_labels_data_file_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/face_embedding_with_label.pkl")
     extracted_faces_path = os.path.join(BASE_DIR, "data/extracted_faces")
     faces = []
 
     face_emb_data = get_face_embedding_and_metadata(embedding_data_file_path)
-    labels = cluster_embeddings(embedding_data_file_path)
+    labels = cluster_embeddings(embedding_data_file_path, embedding_and_labels_data_file_path)
 
     for i in range(len(labels)):
         if labels[i] == 3:
