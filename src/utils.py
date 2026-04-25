@@ -7,6 +7,7 @@ from PIL import Image
 import pillow_heif
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import pickle
 
 # For .heic files
 # Register HEIF opener with Pillow
@@ -127,3 +128,15 @@ def plot_faces(faces):
     
         plt.tight_layout()
         plt.show()
+
+def write_pickle_file(data, output_path):
+    with open(output_path, "wb") as f:
+        pickle.dump(data, f)
+        f.close()
+
+def read_pickle_file(file_path):
+    with open(file_path, "rb") as f:
+        data = pickle.load(f)
+        f.close()
+    
+    return data

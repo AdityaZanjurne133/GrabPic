@@ -10,9 +10,6 @@ load_dotenv()
 BASE_DIR = os.getenv("BASE_DIR")
 sys.path.append(BASE_DIR)
 
-images_path = os.path.join(BASE_DIR, "data/all_photos")
-face_save_path = os.path.join(BASE_DIR, "data/extracted_faces")
-
 # Load model
 model_path = os.path.join(BASE_DIR, "models/yunet.onnx")
 
@@ -25,7 +22,7 @@ detector = cv2.FaceDetectorYN.create(
     top_k=5000
 )
 
-def extract_faces():
+def extract_faces(images_path, face_save_path):
 
     images = os.listdir(images_path)
     skipped = []
@@ -81,15 +78,23 @@ def extract_faces():
     
     print(f"\nSuccessfully extracted faces in {len(os.listdir(face_save_path))} images!")
 
-    print(f"\nCouldn't find faces in {len(skipped)} images:")
     if len(skipped) > 0:
+        print(f"\nCouldn't find faces in {len(skipped)} images:")
         for file in skipped:
             print(file)
     
-    print(f"\nError occured while extracting faces in {len(errors)} images:")
     if len(errors) > 0:
+        
         for file in errors:
             print(file)
 
 if __name__ == "__main__":
-    extract_faces()
+    '''For the main files extraction'''
+    # images_path = os.path.join(BASE_DIR, "data/all_photos")
+    # face_save_path = os.path.join(BASE_DIR, "data/extracted_faces")
+
+    '''For testing files'''
+    images_path = os.path.join(BASE_DIR, "data/test/input_images")
+    face_save_path = os.path.join(BASE_DIR, "data/test/extracted_faces")
+
+    extract_faces(images_path, face_save_path)

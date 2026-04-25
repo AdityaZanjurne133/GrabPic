@@ -12,19 +12,10 @@ load_dotenv()
 BASE_DIR = os.getenv("BASE_DIR")
 sys.path.append(BASE_DIR)
 
-from utils import plot_faces
-
-def get_face_embedding_and_metadata(embedding_data_file_path):
-    # Read face embeddings and related metadata from the pickle file
-    face_emb_data = []
-
-    with open(embedding_data_file_path, "rb") as f:
-        face_emb_data = pickle.load(f)
-
-    return face_emb_data
+from utils import plot_faces, read_pickle_file
 
 def cluster_embeddings(embedding_data_file_path, embedding_and_labels_data_file_path):
-    face_emb_data = get_face_embedding_and_metadata(embedding_data_file_path)
+    face_emb_data = read_pickle_file(embedding_data_file_path)
 
     # Get all the face embeddings as a list
     face_embeddings = []
@@ -43,6 +34,9 @@ def cluster_embeddings(embedding_data_file_path, embedding_and_labels_data_file_
 
     labels = clustering.labels_
 
+    for i in range(len(labels)):
+        face_emb_data[i]["label"] = int(labels[i])
+
     with open(embedding_and_labels_data_file_path, "wb") as f:
         pickle.dump(face_emb_data, f)
 
@@ -54,7 +48,7 @@ if __name__ == "__main__":
     extracted_faces_path = os.path.join(BASE_DIR, "data/extracted_faces")
     faces = []
 
-    face_emb_data = get_face_embedding_and_metadata(embedding_data_file_path)
+    face_emb_data = read_pickle_file(embedding_data_file_path)
     labels = cluster_embeddings(embedding_data_file_path, embedding_and_labels_data_file_path)
 
     for i in range(len(labels)):

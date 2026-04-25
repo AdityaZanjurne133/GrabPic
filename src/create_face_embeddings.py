@@ -29,7 +29,7 @@ def create_face_embedding(face_path):
     with torch.no_grad():
         embedding = embedding_model(face_tensor)
     
-    return embedding
+    return embedding.detach().cpu().numpy().flatten()
 
 def extract_embeddings(faces_root_path, output_path):
     face_emb_data = []
@@ -38,7 +38,7 @@ def extract_embeddings(faces_root_path, output_path):
         for face in tqdm(os.listdir(os.path.join(faces_root_path, img_folder)), desc=f"Creating embedding of faces in {img_folder}.jpg"):
             face_emb = create_face_embedding(os.path.join(faces_root_path, img_folder, face))
             face_emb_data.append({
-                "embedding": face_emb.detach().cpu().numpy().flatten().astype("float64").tolist(),
+                "embedding": face_emb.astype("float64").tolist(),
                 "image": img_folder,
                 "face": face
             })
@@ -51,6 +51,7 @@ def extract_embeddings(faces_root_path, output_path):
     print("Face embedding data written to data/extracted_emb_data.pkl")
 
 if __name__ == "__main__":
+    print("HELLO")
     '''Testing create_face_embedding()'''
     # face_path = os.path.join(BASE_DIR, "data/extracted_faces/20260124_140806/face_1932_1072_282_304.jpg")
     # emb = create_face_embedding(face_path)
