@@ -3,7 +3,8 @@ import sys
 import os
 from dotenv import load_dotenv
 from tqdm import tqdm
-from utils import empty_dir, image_clahe
+
+from src.utils import empty_dir, image_clahe
 
 load_dotenv()
 
@@ -22,9 +23,9 @@ detector = cv2.FaceDetectorYN.create(
     top_k=5000
 )
 
-def extract_faces(images_path, face_save_path):
+def extract_faces(all_images_path, face_save_path):
 
-    images = os.listdir(images_path)
+    images = os.listdir(all_images_path)
     skipped = []
     errors = []
 
@@ -33,7 +34,7 @@ def extract_faces(images_path, face_save_path):
 
     for img in images:
         try:
-            image_path = os.path.join(images_path, img)
+            image_path = os.path.join(all_images_path, img)
             img_faces_folder = img.split(".")[0]
             
             image = cv2.imread(image_path)
@@ -90,11 +91,11 @@ def extract_faces(images_path, face_save_path):
 
 if __name__ == "__main__":
     '''For the main files extraction'''
-    # images_path = os.path.join(BASE_DIR, "data/all_photos")
+    # all_images_path = os.path.join(BASE_DIR, "data/all_photos")
     # face_save_path = os.path.join(BASE_DIR, "data/extracted_faces")
 
     '''For testing files'''
-    images_path = os.path.join(BASE_DIR, "data/test/input_images")
+    all_images_path = os.path.join(BASE_DIR, "data/test/input_images")
     face_save_path = os.path.join(BASE_DIR, "data/test/extracted_faces")
 
-    extract_faces(images_path, face_save_path)
+    extract_faces(all_images_path, face_save_path)

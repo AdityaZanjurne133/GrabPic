@@ -17,22 +17,20 @@ def convert_to_jpg(source_dir, output_dir):
 
     files = os.listdir(source_dir)
 
-    for file in tqdm(files, desc="converting files from .heic to .jpg:"):
+    for file in tqdm(files, desc="converting files to .jpg:"):
         input_file = os.path.join(source_dir, file)
         output_file = os.path.join(output_dir, file.split(".")[0] + ".jpg")
         try:
-            if file.split(".")[-1].lower() == "heic":
-                # Open HEIC image
-                img = Image.open(input_file)
+            img = Image.open(input_file)
 
-                # Show or process
-                # img.show()
+            # Show or process
+            # img.show()
 
-                # Convert to RGB (important for some ops)
-                img = img.convert("RGB")
+            # Convert to RGB (important for some ops)
+            img = img.convert("RGB")
 
-                # Save as JPEG/PNG if needed
-                img.save(output_file, format="JPEG", quality=95)
+            # Save as JPEG/PNG if needed
+            img.save(output_file, format="JPEG", quality=95)
 
         except Exception as e:
             print(f"\nError occured while converting {file} to .jpg format:\n{e}")

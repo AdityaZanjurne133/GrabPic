@@ -3,8 +3,8 @@ from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 
-from utils import read_pickle_file, write_pickle_file
-from create_face_embeddings import create_face_embedding as embedding_model
+from src.utils import read_pickle_file, write_pickle_file
+from src.create_face_embeddings import create_face_embedding as embedding_model
 
 import os
 from dotenv import load_dotenv
@@ -15,12 +15,12 @@ load_dotenv()
 BASE_DIR = os.getenv("BASE_DIR")
 sys.path.append(BASE_DIR)
 
-vector_store = FAISS.load_local(
-    os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/faiss_index"), embedding_model, allow_dangerous_deserialization=True
-)
-
-def get_query_label(face_path):
+def get_query_label(face_path, vector_store_path):
+    vector_store = FAISS.load_local(
+        vector_store_path, embedding_model, allow_dangerous_deserialization=True
+    )
     labels = []
+
     '''Query the vector store'''
     results = vector_store.similarity_search_with_score(
         os.path.join(BASE_DIR, face_path),
@@ -38,8 +38,10 @@ def get_query_label(face_path):
 
     return labels[0][1]
 
-def get_query_images(query_face_path, embedding_and_labels_data_file_path, all_images_path, output_path):
-    face_label = get_query_label(query_face_path)
+def get_query_images(query_face_path, face_embeddings_data_with_labels_output_file_path, all_images_path, vector_store_path, output_path):
+    print("Fetching the label for query image...")
+    face_label = get_query_label(query_face_path, vector_store_path)
+    print(f"Label: {face_label}")
 
     output_path = os.path.join(output_path, f"{face_label}.pkl")
     if os.path.exists(output_path):
@@ -47,7 +49,7 @@ def get_query_images(query_face_path, embedding_and_labels_data_file_path, all_i
         final_face_image_paths = read_pickle_file(output_path)
         return final_face_image_paths
     
-    face_emb_data = read_pickle_file(embedding_and_labels_data_file_path)
+    face_emb_data = read_pickle_file(face_embeddings_data_with_labels_output_file_path)
     
     face_in_images = [d["image"] for d in face_emb_data if d["label"] == face_label]
 
@@ -80,9 +82,10 @@ if __name__ == "__main__":
     face_label = get_query_label(face_path)
     print("Face Label:", face_label)
 
-    embedding_and_labels_data_file_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/face_embedding_with_label.pkl")
+    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/face_embedding_with_label.pkl")
     all_images_path = os.path.join(BASE_DIR, "data/all_photos")
-    final_image_paths_output_file = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5")    # <Face label>.pkl will be appended later
+    query_image_faces_output_folder = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5")    # <Face label>.pkl will be appended later
+    vector_store_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/faiss_index")
 
-    image_files = get_query_images(face_path, embedding_and_labels_data_file_path, all_images_path, final_image_paths_output_file)
+    image_files = get_query_images(face_path, face_embeddings_data_with_labels_output_file_path, all_images_path, vector_store_path, query_image_faces_output_folder)
     print(image_files)
