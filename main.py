@@ -1,4 +1,4 @@
-from src.utils import convert_to_jpg
+from src.utils import convert_to_jpg, empty_dir
 from src.extract_faces import extract_faces
 from src.create_face_embeddings import extract_embeddings
 from src.cluster_embeddings import cluster_embeddings
@@ -7,6 +7,8 @@ from src.query import get_query_images
 
 import yaml
 import os
+import shutil
+import traceback
 from dotenv import load_dotenv
 import sys
 
@@ -18,14 +20,20 @@ sys.path.append(BASE_DIR)
 with open("paths_config.yaml", "r") as f:
     paths_config = yaml.safe_load(f)
 
-def setup_deck():
+def setup_deck(source_dir):
     try:
-        # print("\n1. Convert all images to JPEG format")
-        # uploaded_images_path = os.path.join(BASE_DIR, paths_config["uploaded_images_path"])
-        all_images_path = os.path.join(BASE_DIR, paths_config["all_images_path"])
-        # os.makedirs(all_images_path, exist_ok=True)
+        print("\nCopying all images to data folder...")
+        uploaded_images_path = os.path.join(BASE_DIR, paths_config["uploaded_images_path"])
+        os.makedirs(uploaded_images_path, exist_ok=True)
 
-        # convert_to_jpg(uploaded_images_path, all_images_path)
+        for f in os.listdir(source_dir):
+            shutil.copy(os.path.join(source_dir, f), uploaded_images_path)
+
+        print("\n1. Convert all images to JPEG format")
+        all_images_path = os.path.join(BASE_DIR, paths_config["all_images_path"])
+        os.makedirs(all_images_path, exist_ok=True)
+
+        convert_to_jpg(uploaded_images_path, all_images_path)
 
         print("\n2. Extract faces from all the photos")
         faces_save_path = os.path.join(BASE_DIR, paths_config["faces_save_path"])
@@ -49,9 +57,10 @@ def setup_deck():
         create_vector_store(face_embeddings_data_with_labels_output_file_path, faces_save_path, vector_store_path)
 
     except Exception as e:
-        print(f"[ERROR]: {e}")
+        error_str = traceback.format_exc()
+        print(error_str)
 
-def query_image():
+def query_image(uploaded_image):
     
     face_embeddings_data_output_folder = os.path.join(BASE_DIR, paths_config["face_embeddings_data_output_folder"])
     face_embeddings_data_with_labels_output_file_path = os.path.join(face_embeddings_data_output_folder, paths_config["face_embeddings_data_with_labels_output_file_path"])
@@ -59,6 +68,19 @@ def query_image():
 
     query_image_folder = os.path.join(BASE_DIR, paths_config["query_image_folder"])
     converted_query_image_folder = os.path.join(BASE_DIR, paths_config["converted_query_image_folder"])
+
+    os.makedirs(query_image_folder, exist_ok=True)
+    os.makedirs(converted_query_image_folder, exist_ok=True)
+    
+    # Empty the query image folders to avoid processing wrong images
+    empty_dir(query_image_folder)
+    empty_dir(converted_query_image_folder)
+
+    # Save the file
+    save_path = os.path.join(BASE_DIR, paths_config["query_image_folder"], uploaded_image.name)
+    with open(save_path, "wb") as f:
+        f.write(uploaded_image.getbuffer())
+    
     convert_to_jpg(query_image_folder, converted_query_image_folder)
 
     query_image_faces_output_folder = os.path.join(BASE_DIR, paths_config["query_image_faces_output_folder"])    # <Face label>.pkl will be appended later
@@ -76,9 +98,12 @@ def query_image():
     vector_store_path = os.path.join(BASE_DIR, paths_config["vector_store_path"])
 
     image_files = get_query_images(query_face_path, face_embeddings_data_with_labels_output_file_path, all_images_path, vector_store_path, query_in_image_paths_output_folder)
-    print(image_files)
+    # print(image_files)
+
+    return image_files
 
 if __name__ == "__main__":
     # setup_deck()
-    query_image()
+    # query_image()
+    pass
     

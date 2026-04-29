@@ -34,8 +34,8 @@ def cluster_embeddings(face_embeddings_data_output_file_path, face_embeddings_da
     print(f"\nSuccessfully saved labeled embeddings data in {face_embeddings_data_with_labels_output_file_path}!")
 
 if __name__ == "__main__":
-    face_embeddings_data_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/extracted_emb_data.pkl")
-    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/face_embedding_with_label.pkl")
+    face_embeddings_data_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings/face_embeddings_data.pkl")
+    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings/face_embeddings_data_with_labels.pkl")
     extracted_faces_path = os.path.join(BASE_DIR, "data/extracted_faces")
     
     cluster_embeddings(face_embeddings_data_output_file_path, face_embeddings_data_with_labels_output_file_path)

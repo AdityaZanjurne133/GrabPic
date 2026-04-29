@@ -56,5 +56,5 @@ if __name__ == "__main__":
 
     '''Testing extract_embeddings()'''
     faces_save_path = os.path.join(BASE_DIR, "data/extracted_faces")
-    face_embeddings_data_output_file_path = os.path.join(BASE_DIR, "data/extracted_emb_data.pkl")
+    face_embeddings_data_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings/face_embeddings_data.pkl")
     extract_embeddings(faces_save_path, face_embeddings_data_output_file_path)

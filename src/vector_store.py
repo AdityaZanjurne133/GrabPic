@@ -16,7 +16,7 @@ load_dotenv()
 BASE_DIR = os.getenv("BASE_DIR")
 sys.path.append(BASE_DIR)
 
-sample_image_path = os.path.join(BASE_DIR, "data/all_photos/20260124_140806.jpg")
+sample_image_path = os.path.join(BASE_DIR, "sample.jpeg")
 
 index = faiss.IndexFlatL2(len(embedding_model(sample_image_path)))
 
@@ -45,7 +45,7 @@ def create_vector_store(face_embeddings_data_with_labels_output_file_path, faces
     print(f"\nSuccessfully saved vector store in {vector_store_path}!")
 
 if __name__ == "__main__":
-    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/face_embedding_with_label.pkl")
+    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings/face_embeddings_data_with_labels.pkl")
     faces_save_path = os.path.join(BASE_DIR, "data/extracted_faces")
-    vector_store_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/faiss_index")
+    vector_store_path = os.path.join(BASE_DIR, "data/face_embeddings_vector_store")
     create_vector_store(face_embeddings_data_with_labels_output_file_path, faces_save_path, vector_store_path)

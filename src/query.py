@@ -65,27 +65,20 @@ def get_query_images(query_face_path, face_embeddings_data_with_labels_output_fi
 
 if __name__ == "__main__":
     '''Convert test image to .jpg'''
-    # query_images_path = os.path.join(BASE_DIR, "data/test/query_images")
-    # jpg_images_path = os.path.join(BASE_DIR, "data/test/input_images")
+    # query_images_path = os.path.join(BASE_DIR, "data/query_images/uploaded")
+    # jpg_images_path = os.path.join(BASE_DIR, "data/query_images/jpg_format")
 
     # convert_to_jpg(source_dir=query_images_path, output_dir=jpg_images_path)
     
-    # face_path = "data/test/extracted_faces/20260417_214104/face_275_1013_432_535.jpg"
-    # face_path = "data/test/extracted_faces/20260417_080614/face_190_1008_532_579.jpg"
-    # face_path = "data/test/extracted_faces/20251016_161106_309_1x-1/face_209_351_80_96.jpg"
-    # face_path = "data/test/extracted_faces/20251016_161106_309_1x-1/face_418_367_81_101.jpg"
-    face_path = "data/test/extracted_faces/20251016_161106_309_1x-1/face_573_444_81_101.jpg"
-    # face_path = "data/test/extracted_faces/20251016_161106_309_1x-1/face_787_1875_73_99.jpg"
-    # face_path = "data/test/extracted_faces/20251016_161106_309_1x-1/face_990_1838_87_110.jpg"
-    # face_path = "data/test/extracted_faces/1749983182144/face_154_31_33_39.jpg"
+    face_path = "data/query_faces/20260417_214104/face_275_1012_432_535.jpg"
 
     face_label = get_query_label(face_path)
     print("Face Label:", face_label)
 
-    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/face_embedding_with_label.pkl")
+    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings/face_embeddings_data_with_labels.pkl")
     all_images_path = os.path.join(BASE_DIR, "data/all_photos")
-    query_image_faces_output_folder = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5")    # <Face label>.pkl will be appended later
-    vector_store_path = os.path.join(BASE_DIR, "data/face_embeddings_eps_0.7_min_samples_5/faiss_index")
+    query_image_faces_output_folder = os.path.join(BASE_DIR, "data/query_faces_in_images")    # <Face label>.pkl will be appended later
+    vector_store_path = os.path.join(BASE_DIR, "data/face_embeddings_vector_store")
 
     image_files = get_query_images(face_path, face_embeddings_data_with_labels_output_file_path, all_images_path, vector_store_path, query_image_faces_output_folder)
     print(image_files)

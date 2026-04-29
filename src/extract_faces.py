@@ -95,7 +95,7 @@ if __name__ == "__main__":
     # face_save_path = os.path.join(BASE_DIR, "data/extracted_faces")
 
     '''For testing files'''
-    all_images_path = os.path.join(BASE_DIR, "data/test/input_images")
-    face_save_path = os.path.join(BASE_DIR, "data/test/extracted_faces")
+    all_images_path = os.path.join(BASE_DIR, "data/query_images/jpg_format")
+    face_save_path = os.path.join(BASE_DIR, "data/query_faces")
 
     extract_faces(all_images_path, face_save_path)
