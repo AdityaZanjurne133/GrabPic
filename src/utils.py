@@ -3,7 +3,7 @@ import shutil
 import os
 import torch
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 import pillow_heif
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -22,6 +22,9 @@ def convert_to_jpg(source_dir, output_dir):
         output_file = os.path.join(output_dir, file.split(".")[0] + ".jpg")
         try:
             img = Image.open(input_file)
+
+            # To avoid rotation
+            img = ImageOps.exif_transpose(img)
 
             # Show or process
             # img.show()

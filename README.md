@@ -129,6 +129,8 @@ streamlit run app.py
 
 
 ## 🧩 Future Improvements
+* Multiple decks
+* Authentication
 * Cloud deployment
 
 ---
