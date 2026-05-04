@@ -13,11 +13,41 @@ import pickle
 # Register HEIF opener with Pillow
 pillow_heif.register_heif_opener()
 
+image_exts = {".jpg", ".jpeg", ".png", ".heic", ".bmp", ".gif", ".tiff", ".webp"}
+video_exts = {".mp4", ".avi", ".mov", ".mkv", ".flv", ".wmv", ".webm"}
+
+def copy_all_images(src_dir, dst_dir):
+
+    os.makedirs(dst_dir, exist_ok=True)
+
+    for root, _, files in os.walk(src_dir):
+        for file in files:
+            ext = os.path.splitext(file)[1].lower()
+            if ext in image_exts:
+                src_path = os.path.join(root, file)
+                dst_path = os.path.join(dst_dir, file)
+
+                # Handle duplicate filenames
+                base, ext = os.path.splitext(file)
+                counter = 1
+                while os.path.exists(dst_path):
+                    dst_path = os.path.join(dst_dir, f"{base}_{counter}{ext}")
+                    counter += 1
+
+                shutil.copy2(src_path, dst_path)
+
+    print("✅ All images copied successfully!")
+
 def convert_to_jpg(source_dir, output_dir):
 
     files = os.listdir(source_dir)
 
     for file in tqdm(files, desc="converting files to .jpg:"):
+        # For now processing is limited to images only
+        ext = os.path.splitext(file)[1].lower()
+        if ext not in image_exts:
+            continue
+
         input_file = os.path.join(source_dir, file)
         output_file = os.path.join(output_dir, file.split(".")[0] + ".jpg")
         try:

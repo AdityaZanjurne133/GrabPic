@@ -129,9 +129,12 @@ streamlit run app.py
 
 
 ## 🧩 Future Improvements
-* Multiple decks
 * Authentication
 * Cloud deployment
+* Replace spinner with a progress bar in UI
+* Extract faces in videos too
+* Multiple faces in query image
+* Make a ready to post photo collage
 
 ---
 

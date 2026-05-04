@@ -20,7 +20,7 @@ embedding_model = InceptionResnetV1(pretrained='vggface2').eval().to(device)
 def create_face_embedding(face_path):
 
     face = cv2.imread(face_path)
-    face = image_clahe(face)
+    # face = image_clahe(face)
     face_tensor = get_face_tensor(face)
     face_tensor = face_tensor.unsqueeze(0)
     face_tensor = face_tensor.to(device)

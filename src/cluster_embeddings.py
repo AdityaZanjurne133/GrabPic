@@ -1,4 +1,4 @@
-from sklearn.cluster import DBSCAN
+from sklearn.cluster import DBSCAN, HDBSCAN
 import numpy as np
 import cv2
 import os
@@ -22,8 +22,11 @@ def cluster_embeddings(face_embeddings_data_output_file_path, face_embeddings_da
         [np.array(d["embedding"], dtype=np.float64) for d in face_emb_data],
         dtype=np.float64
     )
+
+    print("len(face_embeddings):", len(face_embeddings))
     
-    clustering = DBSCAN(eps=0.7, min_samples=5).fit(face_embeddings)
+    # clustering = DBSCAN(eps=0.7, min_samples=2).fit(face_embeddings)
+    clustering = HDBSCAN().fit(face_embeddings)
 
     labels = clustering.labels_
 
@@ -33,21 +36,37 @@ def cluster_embeddings(face_embeddings_data_output_file_path, face_embeddings_da
     write_pickle_file(data=face_emb_data, output_path=face_embeddings_data_with_labels_output_file_path)
     print(f"\nSuccessfully saved labeled embeddings data in {face_embeddings_data_with_labels_output_file_path}!")
 
-if __name__ == "__main__":
-    face_embeddings_data_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings/face_embeddings_data.pkl")
-    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data/face_embeddings/face_embeddings_data_with_labels.pkl")
-    extracted_faces_path = os.path.join(BASE_DIR, "data/extracted_faces")
-    
-    cluster_embeddings(face_embeddings_data_output_file_path, face_embeddings_data_with_labels_output_file_path)
-    
-    # faces = []
+    return labels
 
-    # face_emb_data = read_pickle_file(face_embeddings_data_output_file_path)
-    # labels = cluster_embeddings(face_embeddings_data_output_file_path, face_embeddings_data_with_labels_output_file_path)
+if __name__ == "__main__":
+    photo_deck = "Goa2024"
+    face_embeddings_data_output_file_path = os.path.join(BASE_DIR, "data", photo_deck, "face_embeddings/face_embeddings_data.pkl")
+    face_embeddings_data_with_labels_output_file_path = os.path.join(BASE_DIR, "data", photo_deck, "face_embeddings/face_embeddings_data_with_labels.pkl")
+    extracted_faces_path = os.path.join(BASE_DIR, "data", photo_deck, "extracted_faces")
+    
+    # cluster_embeddings(face_embeddings_data_output_file_path, face_embeddings_data_with_labels_output_file_path)
+    
+    faces = []
+
+    face_emb_data = read_pickle_file(face_embeddings_data_output_file_path)
+    labels = cluster_embeddings(face_embeddings_data_output_file_path, face_embeddings_data_with_labels_output_file_path)
+
+    print(labels)
+    max_label = np.max(labels)
 
     # for i in range(len(labels)):
-    #     if labels[i] == 3:
+    #     if labels[i] == -1:
     #         face_path = os.path.join(extracted_faces_path, face_emb_data[i]["image"], face_emb_data[i]["face"])
     #         faces.append(cv2.imread(face_path))
 
-    # plot_faces(faces)
+    # print(len(faces))
+    # plot_faces(faces[:100])
+
+    for l in range(-1, max_label+1):
+        faces = []
+        for i in range(len(labels)):
+            if labels[i] == l:
+                face_path = os.path.join(extracted_faces_path, face_emb_data[i]["image"], face_emb_data[i]["face"])
+                faces.append(cv2.imread(face_path))
+
+        plot_faces(faces[:100])
