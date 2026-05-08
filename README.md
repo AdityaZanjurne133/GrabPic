@@ -125,7 +125,7 @@ streamlit run app.py
 * PIL and OpenCV (Image Processing)
 * PyTorch (Embeddings)
 * FAISS (Vector store)
-* Scikit-learn (Clustering using DBSCAN)
+* Scikit-learn (Clustering using HDBSCAN)
 
 
 ## 🧩 Future Improvements
